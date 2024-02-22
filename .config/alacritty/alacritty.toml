@@ -1,0 +1,25 @@
+
+# Importamos la paleta de colores de dracula.
+import = ["~/.config/alacritty/alacritty-master/dracula.toml"]
+
+[font]
+size=14.0
+
+[font.bold]
+family = "firacodeNerdFont"
+style = "Bold"
+
+[font.bold_italic]
+family = "firacodeNerdFont"
+style = "Bold Italic"
+
+[font.italic]
+family = "firacodeNerdFont"
+style = "Italic"
+
+[font.normal]
+family = "firacodeNerdFont"
+style = "Regular"
+
+[window]
+opacity=0.6
