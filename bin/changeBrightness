@@ -1,0 +1,44 @@
+#!/bin/bash
+# changeBrightness
+
+# Function to increase or decrease brightness
+adjust_brightness() {
+    local delta=$1
+    local current_brightness=$(brightnessctl | awk '/Current brightness/ {print substr($4, 2, length($4)-3)}' 2>/dev/null)
+    local new_brightness=$((current_brightness + delta))
+
+    # Ensure new_brightness is between 0% and 100%
+    new_brightness=$((new_brightness < 0 ? 0 : new_brightness))
+    new_brightness=$((new_brightness > 100 ? 100 : new_brightness))
+
+    brightnessctl s "$new_brightness%" >/dev/null 2>&1
+
+    # Display notification using dunstify with a unique identifier
+    dunstify -r 1337 -a "Brightness Control" "Brightness adjusted to $new_brightness%"
+}
+
+
+
+# Function to get current brightness percentage
+get_brightness() {
+    brightnessctl | awk '/Current brightness/ {print substr($4, 2, length($4)-3)}'
+}
+
+# Check if an argument is provided
+if [ -z "$1" ]; then
+    echo "Usage: $0 <brightness_delta>"
+    exit 1
+fi
+
+# Get the desired brightness delta from the argument
+brightness_delta=$1
+
+# Display the initial brightness
+#echo "Initial brightness: $(get_brightness)%"
+
+# Adjust the brightness
+adjust_brightness "$brightness_delta"
+
+# Display the resulting brightness
+#echo "Resulting brightness: $(get_brightness)%"
+

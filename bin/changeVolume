@@ -1,0 +1,65 @@
+#!/bin/bash
+# changeVolume
+
+# Function to increase or decrease volume
+adjust_volume() {
+    local delta=$1
+    local current_volume=$(pactl list sinks | grep 'Volume:' | head -n 1 | awk '{print $5}' | tr -d '%')
+    local new_volume=$((current_volume + delta))
+
+    # Ensure new_volume is between 0% and 100%
+    new_volume=$((new_volume < 0 ? 0 : new_volume))
+    new_volume=$((new_volume > 100 ? 100 : new_volume))
+
+    pactl set-sink-volume @DEFAULT_SINK@ "$new_volume%"
+
+    # Display notification using dunstify with a unique identifier
+    dunstify -r 1338 -a "Volume Control" "Volume adjusted to $new_volume%"
+}
+
+# Function to mute or unmute volume
+toggle_mute() {
+    local is_muted=$(pactl list sinks | grep 'Mute:' | head -n 1 | awk '{print $2}')
+    
+    if [ "$is_muted" == "yes" ]; then
+        pactl set-sink-mute @DEFAULT_SINK@ 0
+        dunstify -r 1338 -a "Volume Control" "Volume unmuted"
+    else
+        pactl set-sink-mute @DEFAULT_SINK@ 1
+        dunstify -r 1338 -a "Volume Control" "Volume muted"
+    fi
+}
+
+# Function to get current volume percentage
+get_volume() {
+    pactl list sinks | grep 'Volume:' | head -n 1 | awk '{print $5}' | tr -d '%'
+}
+
+# Check if an argument is provided
+if [ -z "$1" ]; then
+    echo "Usage: $0 <volume_delta | mute>"
+    exit 1
+fi
+
+# Check if the argument is "mute"
+if [ "$1" == "mute" ]; then
+    toggle_mute
+    exit 0
+fi
+
+# Get the desired volume delta from the argument
+volume_delta=$1
+
+# Display the initial volume
+#echo "Initial volume: $(get_volume)%"
+
+# Adjust the volume or toggle mute
+if [ "$volume_delta" -eq 0 ]; then
+    toggle_mute
+else
+    adjust_volume "$volume_delta"
+fi
+
+# Display the resulting volume
+#echo "Resulting volume: $(get_volume)%"
+
