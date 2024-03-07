@@ -38,12 +38,17 @@ from qtile_extras.widget.decorations import BorderDecoration
 # from qtile_extras.widget import StatusNotifier
 import colors
 
+import datetime
+
 mod = "mod4"  # Sets mod key to SUPER/WINDOWS
 alt = "mod3"
 myTerm = "alacritty"  # My terminal of choice
 myBrowser = "google-chrome-stable"  # My browser of choice
 myEmacs = "emacsclient -c -a 'emacs' "  # The space at the end is IMPORTANT!
 
+# Function to get the current week number
+def get_week_number():
+    return datetime.date.today().isocalendar()[1]
 
 # Allows you to input a name when adding treetab section.
 @lazy.layout.function
@@ -283,7 +288,7 @@ keys = [
         "i",
         [
             Key([], "e", lazy.spawn("setxkbmap es"), desc="sets the layout to es"),
-            Key([], "u", lazy.spawn("setxkbmap us"), desc="set the layout to us"),
+            Key([], "u", lazy.spawn("setxkbmap us"), desc="set the layout to en"),
         ],
     ),
 ]
@@ -505,10 +510,21 @@ def init_widgets_list():
                 )
             ],
         ),
+        widget.Spacer(length=8), 
+        widget.TextBox(text=f"Week: {get_week_number()}",
+                foreground=colors[3],
+                decorations=[
+                BorderDecoration(
+                    colour=colors[3],
+                    border_width=[0, 0, 2, 0],
+                )
+            ],
+                       ),
         widget.Spacer(length=8),
         widget.Clock(
             foreground=colors[8],
-            format="%a, %b %d - %H:%M",
+            #format="%a, %b %d - %H:%M",
+            format="%d/%m - %H:%M",
             decorations=[
                 BorderDecoration(
                     colour=colors[8],
