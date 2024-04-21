@@ -1,7 +1,3 @@
-
-# Importamos la paleta de colores de dracula.
-import = ["~/.config/alacritty/alacritty-master/dracula.toml"]
-
 [font]
 size=14.0
 
